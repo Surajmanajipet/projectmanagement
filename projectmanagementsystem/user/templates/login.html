@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - MyApp</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="h-screen w-screen flex items-center justify-center bg-gray-50">
+  <div class="w-full max-w-md bg-white rounded-2xl shadow-xl p-8">
+    <h1 class="text-3xl font-bold text-center text-gray-800 mb-6">Login</h1>
+    <form action="" method="POST" id="loginform" class="space-y-6">
+      {% csrf_token %}
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Username</label>
+        <input type="text" id="username" required
+          class="mt-1 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Password</label>
+        <input type="password" id="password" required
+          class="mt-1 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+      </div>
+      <button type="submit"
+        class="w-full px-4 py-2 bg-blue-600 text-white font-medium rounded-lg shadow hover:bg-blue-700">
+        Login
+      </button>
+    </form>
+    <div class="flex justify-between text-sm text-gray-600 mt-6">
+      <a href="{% url 'register' %}" class="hover:underline">Sign Up</a>
+      <a href="{% url 'forgot' %}" class="hover:underline">Forgot Password?</a>
+    </div>
+  </div>
+  <script>
+    const form = document.getElementById('loginform')
+    form.addEventListener('submit', validate)
+
+    async function validate(event) {
+      event.preventDefault();  // 🚀 stops form from reloading the page
+
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+
+      try {
+        const res = await fetch(`http://127.0.0.1:8000/users/${username}/`);
+
+        if (!res.ok) {
+          console.log("user not found");
+          return;
+        }
+
+        const data = await res.json();
+        // Optional: quick password check (demo only, not secure)
+        if (data.password === password) {
+          console.log("Login success ✅");
+          window.location.href = "{% url 'dashboard' %}";
+        } else {
+          console.log("Invalid password ❌");
+        }
+      } catch (err) {
+        console.error("Error fetching user:", err);
+      }
+    }
+
+  </script>
+</body>
+
+</html>
